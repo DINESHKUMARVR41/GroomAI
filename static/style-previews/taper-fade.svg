@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 124" role="img" aria-label="Grooming style reference illustration">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e4efe5"/><stop offset="1" stop-color="#c6d9c9"/></linearGradient><linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e7b995"/><stop offset="1" stop-color="#c88e68"/></linearGradient></defs>
+<rect width="124" height="124" rx="16" fill="url(#bg)"/><circle cx="62" cy="58" r="43" fill="#ffffff" opacity=".35"/>
+<path d="M24 124 Q30 98 47 95 L77 95 Q95 100 101 124Z" fill="#2f5742"/><path d="M54 83 L54 101 L70 101 L70 83" fill="url(#skin)"/>
+<ellipse cx="62" cy="57" rx="28" ry="34" fill="url(#skin)"/>
+<path d="M37 52 Q33 25 55 20 Q78 17 87 39 L82 49 Q69 36 58 40 Q47 44 37 52Z" fill="#2b2624"/>
+<ellipse cx="51" cy="59" rx="2.5" ry="1.8" fill="#342820"/><ellipse cx="73" cy="59" rx="2.5" ry="1.8" fill="#342820"/><path d="M57 71 Q62 74 67 71" fill="none" stroke="#995d4c" stroke-width="2" stroke-linecap="round"/>
+
+<path d="M50 52 Q54 49 57 52 M67 52 Q71 49 75 52" fill="none" stroke="#493329" stroke-width="1.8" stroke-linecap="round"/>
+<rect x="7" y="7" width="110" height="110" rx="13" fill="none" stroke="#ffffff" stroke-opacity=".65" stroke-width="1.5"/>
+</svg>

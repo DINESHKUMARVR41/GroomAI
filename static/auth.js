@@ -1,0 +1,28 @@
+const $ = s => document.querySelector(s);
+const path = location.pathname;
+const mode = path.startsWith('/barber') ? 'barber' : path.startsWith('/admin') ? 'admin' : 'customer';
+const signup = path === '/customer/signup';
+let selectedAvatar = '🙂';
+const roleNames = {customer:'Customer',barber:'Barber',admin:'Admin'};
+const redirects = {customer:'/customer',barber:'/barber',admin:'/admin'};
+function message(text, kind='error'){ $('#authMessage').innerHTML = `<div class="${kind}">${escapeHtml(text)}</div>`; }
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function setBusy(busy){$('#submitBtn').disabled=busy;$('#submitBtn').textContent=busy?'Please wait…':(signup?'Create account ↗':'Sign in ↗');}
+function redirectUser(user){ if(!user)return; if(user.role!==mode){message('This account belongs to the '+roleNames[user.role]+' portal. Please use the correct sign-in page.');return;} location.href=redirects[user.role]; }
+async function api(path,options={}){const r=await fetch(path,{...options,headers:{...(options.body && !(options.body instanceof FormData)?{'Content-Type':'application/json'}:{}) ,...(options.headers||{})}});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.detail||`Request failed (${r.status})`);return d;}
+async function setup(){
+  $('#authKicker').textContent=mode==='customer'?'CUSTOMER ACCESS':mode==='barber'?'BARBER SIGN IN':'ADMIN SIGN IN';
+  $('#authHero').textContent=mode==='customer'?'Good grooming, without the waiting.':mode==='barber'?'Keep the shop moving.':'Manage your shop with clarity.';
+  $('#authHeroText').textContent=mode==='customer'?'Book your service, keep an eye on your queue, and arrive closer to your turn.':mode==='barber'?'Manage walk-ins and online bookings from one live queue.':'Manage service pricing, duration, customer activity and queue operations.';
+  if(mode!=='customer'){$('#signupFields').classList.add('hidden');$('#switchDivider').classList.add('hidden');$('#switchText').classList.add('hidden');$('#googleSection').classList.add('hidden');}
+  if(signup){$('#authTitle').textContent='Create your account';$('#authSubtitle').textContent='Set up your profile to book grooming services.';$('#signupFields').classList.remove('hidden');$('#loginFields').classList.add('hidden');$('#loginUsername').disabled=true;$('#loginUsername').required=false;$('#username').required=true;$('#phone').required=true;$('#switchDivider').textContent='ALREADY HAVE AN ACCOUNT?';$('#switchLink').href='/customer/login';$('#switchLink').textContent='Sign in';$('#submitBtn').textContent='Create account ↗';}
+  else {$('#loginUsername').disabled=false;$('#loginUsername').required=true;$('#username').required=false;$('#phone').required=false;$('#authTitle').textContent=mode==='customer'?'Welcome back':mode==='barber'?'Barber sign in':'Admin sign in';$('#authSubtitle').textContent=mode==='customer'?'Sign in to book services and track your queue.':mode==='barber'?'Use your dedicated barber credentials.':'Use your dedicated admin credentials.';$('#switchLink').href='/customer/signup';$('#switchLink').textContent='Create a customer account';}
+  if(mode==='barber' && ['localhost','127.0.0.1'].includes(location.hostname)){$('#demoCredentials').classList.remove('hidden');$('#demoCredentials').innerHTML='<b>Local demo credentials</b><br>Username: <code>barber@groomai.local</code><br>Password: <code>Barber@12345</code><br><small>Change these in your .env before public deployment.</small>';}
+  if(mode==='admin' && ['localhost','127.0.0.1'].includes(location.hostname)){$('#demoCredentials').classList.remove('hidden');$('#demoCredentials').innerHTML='<b>Local demo credentials</b><br>Username: <code>admin@groomai.local</code><br>Password: <code>GroomAI@12345</code><br><small>Change these in your .env before public deployment.</small>';}
+  $('#emojiPicker')?.querySelectorAll('[data-emoji]').forEach(btn=>btn.addEventListener('click',()=>{selectedAvatar=btn.dataset.emoji;$('#emojiPicker').querySelectorAll('.emoji-choice').forEach(b=>b.classList.toggle('selected',b===btn));}));
+  $('#authForm').addEventListener('submit', async e=>{e.preventDefault();if(!$('#authForm').reportValidity())return;setBusy(true);$('#authMessage').innerHTML='';try{let data;if(signup){data=await api('/api/auth/signup',{method:'POST',body:JSON.stringify({username:$('#username').value.trim(),email:$('#email').value.trim(),phone:$('#phone').value.trim(),password:$('#password').value,avatar:selectedAvatar})});}else{data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username:$('#loginUsername').value.trim(),password:$('#password').value,role:mode})});}if(data.user?.role!==mode){message('This account cannot use this portal.');return;}location.href=redirects[mode];}catch(err){message(err.message);}finally{setBusy(false);}});
+  try{const cfg=await api('/api/config');if(mode==='customer'&&cfg.google_enabled){$('#googleSection').classList.remove('hidden');waitForGoogle(cfg.google_client_id);} }catch{}
+  try{const data=await api('/api/me');if(data.user){if(data.user.role===mode)location.href=redirects[mode];}}catch{}
+}
+function waitForGoogle(clientId, tries=0){if(window.google?.accounts?.id){window.google.accounts.id.initialize({client_id:clientId,callback:async response=>{try{const result=await api('/api/auth/google',{method:'POST',body:JSON.stringify({id_token:response.credential})});location.href='/customer';}catch(e){message(e.message);}}});window.google.accounts.id.renderButton($('#googleButton'),{theme:'outline',size:'large',shape:'pill',width:360,text:'continue_with'});return;}if(tries<30)setTimeout(()=>waitForGoogle(clientId,tries+1),250);}
+setup();
