@@ -85,3 +85,40 @@ Saved looks and feedback are stored in `groomai.db` on your machine. Uploaded im
 
 ### Personalisation score
 The MVP displays a transparent **preference-match estimate** based on the user's selected goal, preferred length and maintenance preference, matched against the style's name/group. It is a lightweight ranking heuristic—not a facial attractiveness score or a claim that a style objectively suits a person's face.
+
+
+## Optional Gemini compatibility recommendations
+
+Add a Gemini API key from Google AI Studio (https://aistudio.google.com/app/apikey) to your local `.env` file:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-3.5-flash-lite
+```
+
+Restart GroomAI, add a photo, load the real YouCam style catalogue, then use **Analyze my current hair & recommend compatible styles**. Gemini vision compares the visible current hair/beard with only the styles returned by YouCam. It is a cautious suggestion, not a guarantee of what a barber can achieve. API quotas and free-tier availability depend on Google's current account and model limits.
+
+## Camera note
+
+The live camera includes instant colour/appearance filters and can remain open while browsing styles. The configured YouCam hair-transfer and beard-style endpoints process still images rather than a continuous live video stream, so an AI hairstyle transformation still needs a captured frame. True live hairstyle replacement would require a dedicated real-time AR/face-tracking SDK or video-capable service; these camera colour filters do not pretend to change hair shape.
+
+
+## Troubleshooting: YouCam suddenly says the key is missing
+
+The ZIP intentionally excludes `.env` because it contains your private API key. If you replaced the whole `GroomAI` folder while updating, the old `.env` may have been removed. Restore your existing `YOUCAM_API_KEY` in the `.env` file next to `main.py`, then restart Uvicorn. `/api/health` now reports the expected `.env` path and whether the key was detected, without exposing the secret. The app can also read `.env` from the current working directory as a fallback.
+
+Do not paste your API key into chat or commit `.env` to GitHub.
+
+## Public style reference images
+
+A small number of verified reference photographs are shown where the style name clearly matches the source image. They are inspiration/reference images only, not YouCam templates and not the user's generated preview. Sources and licences:
+
+- Buzz cut / short fade example — Absock, CC0: https://commons.wikimedia.org/wiki/File:Photo_of_buzz_cut.jpg
+- Curly hair example — Thomas & James Holroyd, public domain: https://commons.wikimedia.org/wiki/File:Man_with_curly_hair_by_T_%26_J_Holroyd_(1a).jpg
+- Pompadour / swept-up example — Kimchifan, CC BY-SA 3.0: https://commons.wikimedia.org/wiki/File:Pompadour_hairstyle.jpg
+- Comb-over example — Edmund F. Arras / DPLA, US public domain notice: https://commons.wikimedia.org/wiki/File:Portrait_of_a_man_with_a_distinctive_hairstyle_-_DPLA_-_21630bf48c60e8cb6a54bb1ae790c3bb.jpg
+- Goatee example — Allamerican85, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Moustache_and_Goatee.jpg
+- Moustache example — Chad fitz, CC BY-SA 3.0: https://commons.wikimedia.org/wiki/File:Mustache.jpg
+- Full beard example — Jlesly, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Bearded_Man.jpg
+
+Styles without a verified matching public reference intentionally show a labelled placeholder rather than a misleading photograph. If YouCam returns its own catalogue thumbnail, that image is shown instead.
