@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111311" />
+  <title>GroomAI — Your look, before the cut</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#top"><span class="brand-mark">G</span><span>groom<span class="brand-ai">AI</span><small>YOUR PERSONAL GROOMING STUDIO</small></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav-link active" data-view="studio"><span>✳</span> Grooming studio</button>
+      <button class="nav-link" data-view="saved"><span>♡</span> Saved looks <span class="nav-count" id="savedCount">0</span></button>
+      <button class="nav-link" data-view="feedback"><span>↗</span> After the cut</button>
+      <div class="sidebar-bottom">
+        <div class="api-status"><span class="status-dot" id="apiDot"></span><div><b id="apiStatus">Checking API</b><small id="apiStatusSub">Connecting to your workspace</small></div></div>
+        <div class="side-tip"><span>✦</span><div><b>Your look. Your call.</b><p>Explore confidently. Choose what feels like you.</p></div></div>
+        <p class="version">GROOMAI · MVP 1.0</p>
+      </div>
+    </aside>
+
+    <main class="main-content" id="top">
+      <header class="topbar"><div class="mobile-brand"><span class="brand-mark">G</span> groom<span class="brand-ai">AI</span></div><div class="topbar-right"><span class="privacy-pill"><span>●</span> Private workspace</span><div class="avatar">Y</div></div></header>
+
+      <section id="studioView" class="view active-view">
+        <div class="hero-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> THE PERSONAL GROOMING STUDIO</div><h1>Your next look,<br><em>before the cut.</em></h1><p class="hero-copy">Try on hairstyles and beard styles using your own photo. Find the look you love, then take it straight to your barber.</p></div><div class="hero-stamp"><span>STYLE</span><strong>01</strong><span>EXPLORE · TRY · CHOOSE</span></div></div>
+
+        <div class="stepper"><div class="step active-step"><span>01</span><div><b>Your photo</b><small>Start with you</small></div></div><div class="step-line"></div><div class="step"><span>02</span><div><b>Explore styles</b><small>Find your fit</small></div></div><div class="step-line"></div><div class="step"><span>03</span><div><b>Make it yours</b><small>Save your look</small></div></div></div>
+
+        <div class="studio-grid">
+          <section class="panel photo-panel">
+            <div class="panel-heading"><div><div class="section-kicker">STEP 01</div><h2>Start with your photo</h2></div><span class="panel-number">01 / 03</span></div>
+            <div class="photo-tabs"><button class="photo-tab selected" id="uploadTab">↥ Upload photo</button><button class="photo-tab" id="cameraTab">◎ Use camera</button></div>
+            <div class="upload-zone" id="uploadZone"><input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" hidden><div class="upload-symbol">↥</div><b>Drop your photo here</b><span>or click to browse your device</span><small>JPG or PNG · Max 9 MB · One face, front-facing works best</small><button class="btn btn-light" id="browseBtn">Choose a photo</button></div>
+            <div class="camera-box hidden" id="cameraBox"><video id="cameraVideo" autoplay playsinline></video><div class="camera-controls"><button class="btn btn-light" id="captureBtn">◎ Capture photo</button><button class="btn btn-ghost" id="closeCameraBtn">Close camera</button></div><p>Camera access works on localhost or HTTPS. Your camera is only used after you allow it.</p></div>
+            <div class="photo-preview hidden" id="photoPreview"><img id="sourceImage" alt="Your uploaded photo"><div class="photo-overlay"><span class="ready-tag"><span></span> PHOTO READY</span><button id="changePhotoBtn" class="change-photo">Change photo ↗</button></div></div>
+            <div class="photo-note"><span>ⓘ</span><p>For the most realistic result, use a clear, well-lit photo with your full face visible and your hairline unobstructed.</p></div>
+          </section>
+
+          <section class="panel styles-panel">
+            <div class="panel-heading"><div><div class="section-kicker">STEP 02</div><h2>Find your style</h2></div><span class="panel-number">02 / 03</span></div>
+            <div class="style-type-switch"><button class="style-type active" data-kind="hair"><span>〰</span> Hairstyles</button><button class="style-type" data-kind="beard"><span>⌁</span> Beard & moustache</button></div>
+            <div class="style-toolbar"><div><h3 id="styleHeading">Choose a hairstyle</h3><p id="styleSubheading">Explore options and preview them on you.</p></div><button class="icon-button" id="refreshStylesBtn" title="Refresh styles">↻</button></div>
+            <div class="filter-row" id="filterRow"><button class="filter-chip active" data-filter="all">All styles</button><button class="filter-chip" data-filter="short">Short</button><button class="filter-chip" data-filter="medium">Medium</button><button class="filter-chip" data-filter="classic">Classic</button></div>
+            <div class="api-notice hidden" id="templateNotice"><span>!</span><div><b>Connect your YouCam API</b><p>Add your API key to <code>.env</code>, restart the server, then refresh styles.</p></div></div>
+            <div class="style-grid" id="styleGrid"><div class="empty-state"><div class="empty-icon">✳</div><b>Loading styles</b><p>Connecting to YouCam's style catalogue…</p></div></div>
+            <div class="selected-style-bar"><div class="selected-style-icon">✦</div><div class="selected-style-copy"><small>YOUR SELECTED STYLE</small><b id="selectedStyleName">No style selected</b></div><button class="btn btn-primary" id="tryOnBtn" disabled>Try this look <span>↗</span></button></div>
+          </section>
+        </div>
+
+        <section class="panel results-panel" id="resultsPanel">
+          <div class="panel-heading"><div><div class="section-kicker">STEP 03</div><h2>Your look, reimagined</h2><p class="muted">Compare your original photo with the AI-generated preview.</p></div><span class="result-state" id="resultState">Waiting for your first try-on</span></div>
+          <div class="results-grid"><div class="result-image-card"><div class="image-card-head"><span>ORIGINAL</span><span class="image-label">Your photo</span></div><div class="result-image-wrap" id="originalResultWrap"><div class="result-placeholder"><span>◎</span><b>Your photo will appear here</b><small>Upload or capture a photo above</small></div><img id="originalResult" class="hidden" alt="Original photo"></div></div><div class="result-image-card featured-result"><div class="image-card-head"><span>GROOMAI PREVIEW</span><span class="image-label ai-label">✦ AI generated</span></div><div class="result-image-wrap" id="generatedResultWrap"><div class="result-placeholder"><span>✧</span><b>Your new look awaits</b><small>Choose a style and tap “Try this look”</small></div><img id="generatedResult" class="hidden" alt="AI generated grooming preview"></div></div></div>
+          <div class="result-actions hidden" id="resultActions"><button class="btn btn-primary" id="saveLookBtn">♡ Save this look</button><button class="btn btn-light" id="barberCardBtn">↗ Create barber card</button><button class="btn btn-ghost" id="compareBtn">⇄ Compare</button></div>
+          <div class="progress-box hidden" id="progressBox"><div class="spinner"></div><div><b id="progressTitle">Preparing your look…</b><p id="progressText">Sending your photo securely to YouCam for processing.</p></div></div>
+        </section>
+
+        <section class="panel personal-panel"><div class="panel-heading"><div><div class="section-kicker">YOUR STYLE PROFILE</div><h2>What feels like you?</h2><p class="muted">Your preferences help rank styles you may want to explore. These are preference matches, not attractiveness scores.</p></div></div><div class="preferences-grid"><div class="preference-field"><label for="goalSelect">The look I'm going for</label><select id="goalSelect"><option value="any">Open to anything</option><option value="professional">Professional & polished</option><option value="casual">Casual & effortless</option><option value="trendy">Modern & trendy</option><option value="bold">Bold & expressive</option></select></div><div class="preference-field"><label for="maintenanceSelect">Daily maintenance</label><select id="maintenanceSelect"><option value="low">Keep it low-maintenance</option><option value="medium">A little styling is fine</option><option value="high">I enjoy styling my hair</option></select></div><div class="preference-field"><label for="lengthSelect">Preferred hair length</label><select id="lengthSelect"><option value="any">No preference</option><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div><div class="preference-field"><label for="barberFrequency">How often do you get a haircut?</label><select id="barberFrequency"><option value="3-4 weeks">Every 3–4 weeks</option><option value="1-2 weeks">Every 1–2 weeks</option><option value="6+ weeks">Every 6+ weeks</option></select></div></div><button class="btn btn-light" id="savePreferencesBtn">Save my preferences</button><span class="inline-success hidden" id="preferencesSaved">Preferences saved on this device.</span></section>
+        <footer class="footer-note">GroomAI helps you explore style possibilities. AI previews are illustrative and may differ from real barber results. <span>Made for your next great haircut ✦</span></footer>
+      </section>
+
+      <section id="savedView" class="view"><div class="page-title"><div class="eyebrow"><span class="eyebrow-line"></span> YOUR COLLECTION</div><h1>Looks worth <em>keeping.</em></h1><p class="hero-copy">Your saved grooming ideas, ready for your next barber visit.</p></div><div id="savedGrid" class="saved-grid"><div class="empty-state"><div class="empty-icon">♡</div><b>No saved looks yet</b><p>Try a hairstyle or beard style, then save it here.</p><button class="btn btn-primary" data-goto="studio">Explore styles</button></div></div></section>
+
+      <section id="feedbackView" class="view"><div class="page-title"><div class="eyebrow"><span class="eyebrow-line"></span> THE REAL-WORLD RESULT</div><h1>How did the cut <em>turn out?</em></h1><p class="hero-copy">Your feedback helps GroomAI understand what you liked and what to suggest next time.</p></div><div class="feedback-layout"><section class="panel feedback-form"><div class="section-kicker">AFTER YOUR BARBER VISIT</div><h2>Review your haircut</h2><form id="feedbackForm"><label for="feedbackStyle">Style you tried</label><input id="feedbackStyle" placeholder="e.g. Textured crop + short boxed beard" required><div class="rating-field"><label>How happy are you with the actual haircut?</label><div class="star-rating" data-rating="satisfaction"><button type="button" data-value="1">★</button><button type="button" data-value="2">★</button><button type="button" data-value="3">★</button><button type="button" data-value="4">★</button><button type="button" data-value="5">★</button></div><small id="satisfactionLabel">Select a rating</small></div><div class="rating-field"><label>How close was it to your virtual preview?</label><div class="star-rating" data-rating="accuracy"><button type="button" data-value="1">★</button><button type="button" data-value="2">★</button><button type="button" data-value="3">★</button><button type="button" data-value="4">★</button><button type="button" data-value="5">★</button></div><small id="accuracyLabel">Select a rating</small></div><label for="feedbackMaintenance">What maintenance level works for you?</label><select id="feedbackMaintenance"><option value="low">Low maintenance</option><option value="medium">Some styling is fine</option><option value="high">High maintenance is okay</option></select><label for="feedbackNotes">What did you like or want to change?</label><textarea id="feedbackNotes" rows="4" placeholder="Tell your future self what to keep or change next time…"></textarea><button class="btn btn-primary btn-wide" type="submit">Save my feedback <span>↗</span></button><p class="form-message" id="feedbackMessage"></p></form></section><section class="panel feedback-history"><div class="section-kicker">YOUR GROOMING JOURNAL</div><h2>Past feedback</h2><p class="muted">Your reviews are saved locally in this app.</p><div id="feedbackHistory"><div class="empty-state compact"><div class="empty-icon">✎</div><b>Your grooming journey starts here</b><p>After your next haircut, leave a review.</p></div></div></section></div></section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <dialog id="barberDialog" class="barber-dialog"><div class="dialog-head"><div><div class="section-kicker">TAKE IT TO YOUR BARBER</div><h2>Your barber reference card</h2></div><button class="icon-button" id="closeBarberDialog" aria-label="Close">×</button></div><div id="barberCardContent"></div><div class="dialog-actions"><button class="btn btn-light" id="printBarberCard">Print / Save PDF</button><button class="btn btn-primary" id="downloadBarberCard">Download reference image</button></div></dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
