@@ -119,8 +119,10 @@ def normalize_template(item, index):
     name = item.get('template_name') or item.get('name') or item.get('style_name') or item.get('title') or f'Style {index + 1}'
     # YouCam template responses vary by API version. Prefer the official template thumbnail/preview fields.
     image = None
-    image_keys = ('thumb', 'thumbnail_url', 'template_thumbnail_url', 'template_image_url', 'preview_url',
-                  'image_url', 'cover_url', 'cover_image', 'sample_image_url', 'template_preview_url', 'template_img', 'template_image', 'style_image', 'image_uri', 'thumbnail_image', 'thumbnail', 'preview', 'image', 'url')
+    image_keys = ('template_thumbnail_url', 'template_thumb_url', 'thumbnail_url', 'thumb_url', 'thumb',
+                  'template_image_url', 'template_preview_url', 'preview_url', 'image_url', 'cover_image_url',
+                  'cover_url', 'cover_image', 'sample_image_url', 'template_img', 'template_image',
+                  'style_image', 'image_uri', 'thumbnail_image', 'thumbnailUrl', 'thumbnail', 'preview', 'image', 'img', 'url')
     for key in image_keys:
         candidate = item.get(key)
         if isinstance(candidate, dict):
@@ -173,9 +175,13 @@ def normalize_template(item, index):
                         return found
             return None
         image = find_template_image(item)
-    group = item.get('category_name') or item.get('group_name') or item.get('category') or item.get('style_group') or 'Recommended'
+    group = (item.get('category_name') or item.get('group_name') or item.get('category') or item.get('style_group')
+             or item.get('subcategory_name') or item.get('subcategory') or item.get('type') or 'Recommended')
     gender = item.get('gender') or item.get('target_gender') or item.get('audience') or item.get('gender_type') or item.get('sex') or ''
-    return {'id': str(tid), 'name': str(name), 'image': image, 'group': str(group), 'gender': str(gender), 'official': True}
+    # Keep category metadata from the same template object so facial-hair filters never
+    # infer a moustache/beard category from a different template's image or metadata.
+    category = item.get('category_name') or item.get('category') or item.get('subcategory_name') or item.get('subcategory') or item.get('type') or ''
+    return {'id': str(tid), 'name': str(name), 'image': image, 'group': str(group), 'category': str(category), 'subcategory': str(item.get('subcategory') or item.get('subcategory_name') or ''), 'type': str(item.get('type') or ''), 'gender': str(gender), 'official': True}
 
 
 def upload_to_youcam(file_bytes: bytes, filename: str, content_type: str):
